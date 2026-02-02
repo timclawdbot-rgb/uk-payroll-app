@@ -11,8 +11,9 @@ import {
   TextInput,
   View,
 } from 'react-native';
+import { Picker } from '@react-native-picker/picker';
 
-import { payrollFromAnnualSalary2425 } from './src/ukTax2425';
+import { payrollFromAnnualSalary, TAX_YEARS, type TaxYearKey } from './src/ukTaxYears';
 
 function parseMoneyInput(v: string) {
   // Allow "50,000" / "£50000" etc.
@@ -35,11 +36,12 @@ function formatGBP(n: number) {
 
 export default function App() {
   const [salaryText, setSalaryText] = useState('50000');
+  const [taxYear, setTaxYear] = useState<TaxYearKey>('2024/25');
 
   const result = useMemo(() => {
     const gross = parseMoneyInput(salaryText);
-    return payrollFromAnnualSalary2425(gross);
-  }, [salaryText]);
+    return payrollFromAnnualSalary(taxYear, gross);
+  }, [salaryText, taxYear]);
 
   return (
     <SafeAreaView style={styles.safe}>
@@ -48,11 +50,25 @@ export default function App() {
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
       >
         <ScrollView contentContainerStyle={styles.container} keyboardShouldPersistTaps="handled">
-          <Text style={styles.title}>UK Payroll (2024/25)</Text>
+          <Text style={styles.title}>UK Payroll</Text>
           <Text style={styles.subtitle}>Annual salary → estimated take-home (PAYE + Employee NI)</Text>
 
           <View style={styles.card}>
-            <Text style={styles.label}>Annual salary (gross)</Text>
+            <Text style={styles.label}>Tax year</Text>
+            <View style={styles.pickerWrap}>
+              <Picker
+                selectedValue={taxYear}
+                onValueChange={(v) => setTaxYear(v)}
+                dropdownIconColor="#e7eefc"
+                style={styles.picker}
+              >
+                {TAX_YEARS.map((y) => (
+                  <Picker.Item key={y.key} label={y.label} value={y.key} color={Platform.OS === 'android' ? '#e7eefc' : undefined} />
+                ))}
+              </Picker>
+            </View>
+
+            <Text style={[styles.label, { marginTop: 12 }]}>Annual salary (gross)</Text>
             <TextInput
               value={salaryText}
               onChangeText={setSalaryText}
@@ -65,6 +81,9 @@ export default function App() {
             <Text style={styles.disclaimer}>
               Assumes England/Wales/NI income tax bands. No pension, student loan, or benefits.
             </Text>
+            {result.notes.length ? (
+              <Text style={[styles.disclaimer, { color: '#ffd74a' }]}>Note: {result.notes.join(' ')}</Text>
+            ) : null}
           </View>
 
           <View style={styles.card}>
@@ -95,13 +114,19 @@ export default function App() {
               Personal allowance tapers down above £100,000 and reaches £0 at £125,140.
             </Text>
 
-            <Pressable style={styles.btn} onPress={() => setSalaryText('50000')}>
-              <Text style={styles.btnText}>Reset to £50,000</Text>
+            <Pressable
+              style={styles.btn}
+              onPress={() => {
+                setSalaryText('50000');
+                setTaxYear('2024/25');
+              }}
+            >
+              <Text style={styles.btnText}>Reset to £50,000 (2024/25)</Text>
             </Pressable>
           </View>
 
           <Text style={styles.footer}>
-            Disclaimer: estimates only. Do not rely on this app for payroll/tax decisions. It was generated/assisted by Clawdbot AI / OpenClaw and may be wrong.
+            Disclaimer: estimates only. Do not rely on this app for payroll/tax decisions. Figures vary by tax code and other factors. This app was generated/assisted by Clawdbot AI / OpenClaw and may be wrong.
           </Text>
         </ScrollView>
       </KeyboardAvoidingView>
@@ -141,6 +166,17 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(255,255,255,0.03)',
     borderRadius: 16,
     padding: 14,
+  },
+  pickerWrap: {
+    borderWidth: 1,
+    borderColor: '#2c3f62',
+    backgroundColor: '#0a101d',
+    borderRadius: 12,
+    overflow: 'hidden',
+  },
+  picker: {
+    color: '#e7eefc',
+    height: 48,
   },
   label: {
     color: '#a9b7d6',
