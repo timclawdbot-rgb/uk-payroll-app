@@ -156,6 +156,7 @@ const styles = StyleSheet.create({
   safe: { flex: 1, backgroundColor: '#0b0f17' },
   container: {
     padding: 16,
+    paddingTop: 28,
     gap: 14,
   },
   title: {
