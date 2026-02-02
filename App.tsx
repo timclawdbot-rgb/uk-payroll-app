@@ -55,17 +55,22 @@ export default function App() {
 
           <View style={styles.card}>
             <Text style={styles.label}>Tax year</Text>
-            <View style={styles.pickerWrap}>
+            <View style={[styles.pickerWrap, Platform.OS === 'android' && { backgroundColor: '#fff', borderColor: '#ddd' }]}>
               <Picker
                 selectedValue={taxYear}
                 onValueChange={(v) => setTaxYear(v)}
-                dropdownIconColor="#e7eefc"
+                dropdownIconColor={Platform.OS === 'android' ? '#000' : '#e7eefc'}
                 mode="dropdown"
-                style={styles.picker}
-                itemStyle={styles.pickerItem}
+                style={[styles.picker, Platform.OS === 'android' && styles.pickerAndroid]}
+                itemStyle={Platform.OS === 'android' ? styles.pickerItemAndroid : styles.pickerItem}
               >
                 {TAX_YEARS.map((y) => (
-                  <Picker.Item key={y.key} label={y.label} value={y.key} color="#e7eefc" />
+                  <Picker.Item
+                    key={y.key}
+                    label={y.label}
+                    value={y.key}
+                    color={Platform.OS === 'android' ? '#000' : '#e7eefc'}
+                  />
                 ))}
               </Picker>
             </View>
@@ -181,8 +186,17 @@ const styles = StyleSheet.create({
     height: 48,
     backgroundColor: '#0a101d',
   },
+  // Some Android devices/themes force the native picker background to white.
+  // Make the selected value readable by switching to black-on-white on Android.
+  pickerAndroid: {
+    color: '#000',
+    backgroundColor: '#fff',
+  },
   pickerItem: {
     color: '#e7eefc',
+  },
+  pickerItemAndroid: {
+    color: '#000',
   },
   label: {
     color: '#a9b7d6',
