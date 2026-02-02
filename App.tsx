@@ -60,10 +60,12 @@ export default function App() {
                 selectedValue={taxYear}
                 onValueChange={(v) => setTaxYear(v)}
                 dropdownIconColor="#e7eefc"
+                mode="dropdown"
                 style={styles.picker}
+                itemStyle={styles.pickerItem}
               >
                 {TAX_YEARS.map((y) => (
-                  <Picker.Item key={y.key} label={y.label} value={y.key} color={Platform.OS === 'android' ? '#e7eefc' : undefined} />
+                  <Picker.Item key={y.key} label={y.label} value={y.key} color="#e7eefc" />
                 ))}
               </Picker>
             </View>
@@ -177,6 +179,10 @@ const styles = StyleSheet.create({
   picker: {
     color: '#e7eefc',
     height: 48,
+    backgroundColor: '#0a101d',
+  },
+  pickerItem: {
+    color: '#e7eefc',
   },
   label: {
     color: '#a9b7d6',
