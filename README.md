@@ -1,6 +1,8 @@
-# UK Payroll App (2024/25) — Expo (TypeScript)
+# UK Payroll App (2019/20–2024/25) — Expo (TypeScript)
 
-A simple UK payroll/take‑home pay estimator for the **2024/25** tax year.
+A simple UK payroll/take‑home pay estimator for UK tax years **2019/20 through 2024/25**.
+
+![App screenshot](./screenshots/app.jpg)
 
 ## What it does
 - Input: **Annual gross salary**
